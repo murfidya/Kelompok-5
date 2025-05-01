@@ -1,0 +1,22 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h2>Patients</h2>
+<form method="post" action="/patients/create">
+    <input name="first_name" placeholder="First Name">
+    <input name="last_name" placeholder="Last Name">
+    <input name="gender" placeholder="Gender">
+    <input name="birth_date" placeholder="YYYY-MM-DD">
+    <input name="city" placeholder="City">
+    <input name="province_id" placeholder="Province ID" type="number">
+    <input name="allergies" placeholder="Allergies">
+    <input name="height" placeholder="Height" type="number" step="any">
+    <input name="weight" placeholder="Weight" type="number" step="any">
+    <button type="submit">Add Patient</button>
+</form>
+<ul>
+{% for p in patients %}
+    <li>{{ p.first_name }} {{ p.last_name }} - <form method="post" action="/patients/delete/{{ p.patient_id }}" style="display:inline;"><button type="submit">Delete</button></form></li>
+{% endfor %}
+</ul>
+{% endblock %}
