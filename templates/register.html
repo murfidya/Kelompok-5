@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register - Smart Study Organizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white rounded shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 text-center">Create an Account</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div>
+              {% for category, message in messages %}
+                <div class="mb-4 p-3 rounded {{ 'bg-red-200 text-red-800' if category == 'danger' else 'bg-green-200 text-green-800' }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('auth.register') }}">
+            <label class="block mb-2 font-semibold" for="username">Username</label>
+            <input class="w-full p-2 mb-4 border rounded" type="text" id="username" name="username" required autocomplete="username" />
+
+            <label class="block mb-2 font-semibold" for="email">Email</label>
+            <input class="w-full p-2 mb-4 border rounded" type="email" id="email" name="email" required autocomplete="email" />
+
+            <label class="block mb-2 font-semibold" for="password">Password</label>
+            <input class="w-full p-2 mb-4 border rounded" type="password" id="password" name="password" required autocomplete="new-password" />
+
+            <label class="block mb-2 font-semibold" for="confirm_password">Confirm Password</label>
+            <input class="w-full p-2 mb-4 border rounded" type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password" />
+
+            <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700" type="submit">Register</button>
+        </form>
+        <p class="mt-4 text-center text-gray-600">
+            Already have an account? <a href="{{ url_for('auth.login') }}" class="text-blue-600 hover:underline">Login here</a>.
+        </p>
+    </div>
+</body>
+</html>
