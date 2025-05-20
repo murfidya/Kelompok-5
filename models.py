@@ -1,30 +1,43 @@
-from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
-from database import Base
+from extensions import db
+from flask_login import UserMixin
+from datetime import datetime, timezone
 
-class Patient(Base):
-    __tablename__ = "patients"
-    patient_id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    gender = Column(String)
-    birth_date = Column(Date)
-    city = Column(String)
-    province_id = Column(Integer)
-    allergies = Column(String)
-    height = Column(Float)
-    weight = Column(Float)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+    tasks = db.relationship('Task', backref='owner', lazy=True)
+    assignments = db.relationship('Assignment', backref='owner', lazy=True)
+    exams = db.relationship('Exam', backref='owner', lazy=True)
+    notes = db.relationship('Note', backref='owner', lazy=True)
 
-class Admission(Base):
-    __tablename__ = "admissions"
-    patient_id = Column(Integer, primary_key=True, index=True)
-    admission_date = Column(Date)
-    discharge_date = Column(Date, nullable=True)
-    diagnosis = Column(String)
-    attending_doctor_id = Column(Integer)
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    due_date = db.Column(db.DateTime, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-class Doctor(Base):
-    __tablename__ = "doctors"
-    doctor_id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    specialty = Column(String)
+class Assignment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    due_date = db.Column(db.DateTime, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Exam(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(100), nullable=False)
+    exam_date = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=True)
+    subject = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
